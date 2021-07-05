@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input name="uploadFiles" type="file" multiple>
+    <button class="uploadBtn">Upload</button>
+    <div class="uploadResult"></div>
+</body>
+<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+    $('.uploadBtn').click(function(){
+        var formData = new FormData();
+        var inputFile = $("input[type='file']");
+        var files = inputFile[0].files; // 첫번째 태그의 files 속성 접근
+        for(var i = 0; i < files.length; i++){
+            console.log(files[i]);
+            formData.append("uploadFiles", files[i]);
+        }
+
+        $.ajax({
+            url : '/uploadAjax',
+            processData : false,
+            contentType : false,
+            data : formData,
+            dataType : 'json',
+            type : 'POST',
+            success : function (result) {
+                showUploadedImage(result);
+            },
+            error : function(jqXHR, textStatus, errorThrown){
+
+            }
+        });
+    });
+
+    $('.uploadResult').on("click" , ".removeBtn", function(e){
+        var target = $(this);
+        var fileName = target.data("name");
+        var targetDiv = $(this).closest("div");
+
+        $.post('removeFile', {fileName : fileName}, function(result){
+            if(result === true) targetDiv.remove();
+        })
+    });
+
+    function showUploadedImage(arr) {
+        var divArea = $('.uploadResult');
+        var str = '';
+
+        for(var i = 0; i < arr.length; i++){
+            str += "<div>";
+            str += "<img src='/display?fileName=" + arr[i].thumbnailURL + "'>";
+            str += "<button class='removeBtn' data-name='" + arr[i].imageURL +"'>Remove</button>";
+            str += "</div>";
+        }
+        divArea.append(str);
+    }
+</script>
+
+
+</html>
