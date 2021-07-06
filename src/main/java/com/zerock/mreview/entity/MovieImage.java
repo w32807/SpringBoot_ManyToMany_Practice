@@ -18,6 +18,8 @@ public class MovieImage extends BaseEntity{
 
     private String uuid;
 
+    private String path;
+
     private String imgName;
 
     @ManyToOne(fetch = FetchType.LAZY)
