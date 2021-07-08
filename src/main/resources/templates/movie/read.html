@@ -3,76 +3,35 @@
     <!--/* 마치 인클루드처럼, basic 레이아웃을 1개 만들고 내부의 화면은 따로 매개변수처럼 넣어줌 */-->
     <th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
         <th:block th:fragment="content">
-            <h1 class="mt-4">board Read Page</h1>
+            <h1 class="mt-4">movie Read Page</h1>
 
-            <div class="form-group">
-                <label>Bno</label>
-                <input type="text" class="form-control" name="bno" th:value="${dto.bno}" readonly>
-            </div>
             <div class="form-group">
                 <label>Title</label>
                 <input type="text" class="form-control" name="title" th:value="${dto.title}" readonly>
             </div>
             <div class="form-group">
-                <label>Content</label>
-                <textarea class="form-control" rows="5" readonly>[[${dto.content}]]</textarea>
+                <label>Review Count</label>
+                <input type="text" class="form-control" name="title" th:value="${dto.reviewCnt}" readonly>
             </div>
             <div class="form-group">
-                <label>WriterName</label>
-                <textarea class="form-control" rows="5" name="writer" readonly>[[${dto.writerName}]]</textarea>
+                <label>Avg</label>
+                <input type="text" class="form-control" name="title" th:value="${dto.avg}" readonly>
             </div>
-            <div class="form-group">
-                <label>RegDate</label>
-                <input type="text" class="form-control" name="regDate" th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+            <div class="uploadResult">
+                <ul>
+                    <li th:each="movieImage: ${dto.imageDTOList}">
+                        <img th:if="${movieImage.path != null}"
+                             th:src="|/display?fileName=${movieImage.getThumbnailURL()}|">
+                    </li>
+                </ul>
             </div>
-            <div class="form-group">
-                <label>ModDate</label>
-                <input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
-            </div>
-            <a th:href="@{/board/modify(bno=${dto.bno}, page=${requestDTO.page})}">
-                <button class="btn btn-primary">Modify</button>
-            </a>
-            <a th:href="@{/board/list(page=${requestDTO.page})}">
-                <button class="btn btn-info">List</button>
-            </a>
-            <div>
-                <div class="mt-4">
-                    <h5><span class="badge badge-info addReply">Add reply</span></h5>
-                    <h5><span class="badge badge-secondary replyCount">Reply Count [[${dto.replyCount}]]</span></h5>
-                </div>
-                <div class="list-group replyList"></div>
-            </div>
-            <div class="modal" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">댓글 등록</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="replyText" placeholder="Reply Text....">
-                            </div>
-                            <div class="form-group">
-                                <input class="form-control" type="text" name="replyer" placeholder="replyer">
-                                <input type="hidden" name="rno">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger replyRemove">Remove</button>
-                            <button type="button" class="btn btn-warning replyModify">Modify</button>
-                            <button type="button" class="btn btn-primary replySave">Save</button>
-                            <button type="button" class="btn btn-outline-secondary replyClose" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button type="button" class="btn btn-primary">Review Count
+                <span class="badge badge-light">[[${dto.reviewCnt}]]</span>
+            </button>
             <script th:inline="javascript">
                 var listGroup = $(".replyList");
                 var modal = $(".modal");
-                var bno = [[${dto.bno}]];
+                var mno = [[${dto.mno}]];
 
                 $(".replyCount").click(function(){
                    loadJSONDate()
@@ -89,7 +48,7 @@
 
                 $(".replySave").click(function(){
                     var reply = {
-                        bno : bno,
+                        mno : mno,
                         text : $("input[name='replyText']").val(),
                         replyer : $("input[name='replyer']").val()
                     }
@@ -142,7 +101,7 @@
                     var rno = $("input[name='rno']").val();
 
                     var reply = {
-                        bno : bno,
+                        mno : mno,
                         rno : rno,
                         text : $("input[name='replyText']").val(),
                         replyer : $("input[name='replyer']").val()
@@ -172,7 +131,7 @@
                 function loadJSONDate(){
                     var str = "";
 
-                    $.getJSON('/replies/board/'+bno, function(arr){
+                    $.getJSON('/replies/movie/'+mno, function(arr){
                         $(".replyCount").html(" Reply Count " + arr.length);
                         $.each(arr, function(idx, reply){
                             str += ' <div class="card-body" data-rno=' + reply.rno + '><b>' + reply.rno + '</b>';
