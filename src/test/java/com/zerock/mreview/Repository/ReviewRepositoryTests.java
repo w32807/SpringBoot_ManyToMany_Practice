@@ -10,8 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.stream.IntStream;
-
-@SpringBootTest
 public class ReviewRepositoryTests {
 
     @Autowired
@@ -41,5 +39,14 @@ public class ReviewRepositoryTests {
         result.forEach(movieReview -> {
             System.out.println(movieReview);
         });
+    }
+
+    @Test
+    public void test(){
+        String str1 = "result";
+        String str2 = "result";
+
+        System.out.println(str1.hashCode());
+        System.out.println(str2.hashCode());
     }
 }
